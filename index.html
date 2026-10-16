@@ -136,6 +136,18 @@ thead th{font:400 9px/1.5 var(--px);background:var(--ink);color:var(--gold);curs
 thead th[aria-sort]::after{content:" \25BC"}
 tbody tr:nth-child(even){background:color-mix(in srgb,var(--ink) 7%,transparent)}
 td .who{display:inline-flex;align-items:center;gap:10px;font-weight:600}
+.grp{display:flex;align-items:center;gap:12px;font:400 13px/1.5 var(--px);margin:52px 0 6px}
+.grp::before{content:"";width:16px;height:16px;background:var(--c);border:3px solid var(--ink);flex:none}
+.grp+.boards{margin-top:16px}
+.hint+.boards{margin-top:16px}
+.rarelist li{grid-template-columns:52px minmax(0,1fr);row-gap:0}
+.rarelist .nm{white-space:normal}
+.rarelist .val{grid-column:2;font:500 15px var(--body);color:var(--muted);white-space:normal}
+.msgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}
+.ms{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.ms .head{width:32px;height:32px}
+.ms strong{display:block;font:400 10px/1.6 var(--px)}
+.ms span{color:var(--muted);font-size:16px}
 .note{margin:18px 0 0;color:var(--muted);font-size:16px}
 .maplink{margin-top:26px;display:flex;gap:14px;flex-wrap:wrap}
 
@@ -278,6 +290,20 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
     </div>
 
     <div class="boards" id="boards"></div>
+
+    <h3 class="grp" style="--c:#4ee6e0">Erze abgebaut</h3>
+    <div class="boards" id="boards-ores"></div>
+
+    <h3 class="grp" style="--c:var(--gold)">Gerade im Besitz</h3>
+    <p class="hint">Inventar und Enderkiste, auch in Shulkerkisten. Normale Kisten zählen nicht. Blöcke zählen als 9.</p>
+    <div class="boards" id="boards-own"></div>
+
+    <h3 class="grp" style="--c:var(--violet)">Seltene Items</h3>
+    <p class="hint">Jedes seltene Item, das jemand je aufgesammelt, hergestellt oder im Inventar hat, bringt Punkte. Je seltener, desto mehr.</p>
+    <div class="boards" id="boards-rare"></div>
+
+    <h3 class="grp" style="--c:var(--lava)">Wer war zuerst?</h3>
+    <div class="msgrid" id="milestones"></div>
 
     <div class="tablewrap box" id="tablebox" hidden>
       <table>
@@ -509,36 +535,95 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
   }
   function hours(sec){return sec/3600}
   function fmtTime(sec){var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?h+" h "+m+" min":m+" min"}
+  function K(k){return function(p){return p[k]||0}}
+  function O(g,k){return function(p){return (p[g]&&p[g][k])||0}}
   var CATS=[
-    {k:"play",t:"Spielzeit",c:"var(--green)",f:fmtTime},
-    {k:"dia",t:"Diamanten abgebaut",c:"var(--cyan)"},
-    {k:"mined",t:"Blöcke abgebaut",c:"var(--gold)"},
-    {k:"km",t:"Gelaufen (km)",c:"var(--violet)",f:function(v){return fmt.format(v)+" km"}},
-    {k:"mobs",t:"Mob-Kills",c:"var(--lava)"},
-    {k:"pvp",t:"Spieler-Kills",c:"var(--pink)"},
-    {k:"deaths",t:"Meiste Tode",c:"var(--pink)"},
-    {k:"debris",t:"Antiker Schutt",c:"var(--violet)"},
-    {k:"jumps",t:"Sprünge",c:"var(--cyan)"}
+    {g:K("play"),k:"play",t:"Spielzeit",c:"var(--green)",f:fmtTime},
+    {g:K("dia"),k:"dia",t:"Diamanten abgebaut",c:"var(--cyan)"},
+    {g:K("mined"),k:"mined",t:"Blöcke abgebaut",c:"var(--gold)"},
+    {g:K("km"),k:"km",t:"Gelaufen (km)",c:"var(--violet)",f:function(v){return fmt.format(v)+" km"}},
+    {g:K("mobs"),k:"mobs",t:"Mob-Kills",c:"var(--lava)"},
+    {g:K("pvp"),k:"pvp",t:"Spieler-Kills",c:"var(--pink)"},
+    {g:K("deaths"),k:"deaths",t:"Meiste Tode",c:"var(--pink)"},
+    {g:K("adv"),k:"adv",t:"Fortschritte",c:"var(--green)"},
+    {g:K("jumps"),k:"jumps",t:"Sprünge",c:"var(--cyan)"}
   ];
-  var players=[],sortKey="play";
+  var ORES=[
+    {g:O("ores","diamond"),t:"Diamant-Erz",c:"#4ee6e0"},
+    {g:O("ores","debris"),t:"Antiker Schutt",c:"#8a5a4a"},
+    {g:O("ores","emerald"),t:"Smaragd-Erz",c:"#3fcf6a"},
+    {g:O("ores","gold"),t:"Gold-Erz",c:"var(--gold)"},
+    {g:O("ores","iron"),t:"Eisen-Erz",c:"#d8c3b0"},
+    {g:O("ores","lapis"),t:"Lapis-Erz",c:"#4a6ee0"},
+    {g:O("ores","redstone"),t:"Redstone-Erz",c:"var(--lava)"},
+    {g:O("ores","copper"),t:"Kupfer-Erz",c:"#e08a5a"},
+    {g:O("ores","coal"),t:"Kohle-Erz",c:"#9a9aa8"},
+    {g:O("ores","quartz"),t:"Quarz-Erz",c:"#f2ece4"}
+  ];
+  var OWN=[
+    {g:O("own","value"),t:"Reichste Spieler",c:"var(--gold)",f:function(v){return fmt.format(v)+" Dia-Wert"}},
+    {g:O("own","netherite"),t:"Netherite-Barren",c:"#6b5a5a"},
+    {g:O("own","diamond"),t:"Diamanten",c:"#4ee6e0"},
+    {g:O("own","emerald"),t:"Smaragde",c:"#3fcf6a"},
+    {g:O("own","gold"),t:"Gold",c:"var(--gold)"},
+    {g:O("own","iron"),t:"Eisen",c:"#d8c3b0"}
+  ];
+  var RARENAME={dragon_egg:"Drachenei",nether_star:"Netherstern",beacon:"Leuchtfeuer",elytra:"Elytren",enchanted_golden_apple:"Verzauberter Goldapfel",mace:"Streitkolben",heavy_core:"Schwerer Kern",netherite_ingot:"Netheritbarren",netherite_block:"Netheritblock",netherite_sword:"Netheritschwert",netherite_pickaxe:"Netheritspitzhacke",netherite_axe:"Netheritaxt",netherite_shovel:"Netheritschaufel",netherite_hoe:"Netherithacke",netherite_helmet:"Netherithelm",netherite_chestplate:"Netheritharnisch",netherite_leggings:"Netherithose",netherite_boots:"Netheritstiefel",trident:"Dreizack",totem_of_undying:"Totem der Unsterblichkeit",heart_of_the_sea:"Herz des Meeres",conduit:"Aquisator",wither_skeleton_skull:"Witherskelettschädel",dragon_head:"Drachenkopf",sniffer_egg:"Schnüffler-Ei",shulker_shell:"Shulkerschale",shulker_box:"Shulkerkiste",ancient_debris:"Antiker Schutt",netherite_upgrade_smithing_template:"Netherit-Aufwertung",echo_shard:"Echoscherbe",recovery_compass:"Bergungskompass",music_disc_pigstep:"Platte Pigstep",music_disc_otherside:"Platte otherside",music_disc_5:"Platte 5",music_disc_relic:"Platte Relic",music_disc_creator:"Platte Creator",diamond_block:"Diamantblock",emerald_block:"Smaragdblock",golden_apple:"Goldener Apfel",enchanted_book:"Verzaubertes Buch",saddle:"Sattel",name_tag:"Namensschild",ominous_trial_key:"Unheilvoller Prüfungsschlüssel",trial_key:"Prüfungsschlüssel",breeze_rod:"Böenrute",spawner:"Spawner",budding_amethyst:"Knospender Amethyst"};
+  var players=[],milestones=[],rarePoints={},sortKey="play";
   function val(c,v){return c.f?c.f(v||0):fmt.format(v||0)}
 
+  function board(c,top){
+    var card=el("article","board box");card.style.setProperty("--c",c.c);
+    card.appendChild(el("h3",null,c.t));
+    if(!top.length){card.appendChild(el("span","empty","Noch niemand."));return card}
+    var ol=el("ol");
+    top.forEach(function(row,i){
+      var li=el("li");li.appendChild(el("span","rk","#"+(i+1)));li.appendChild(headImg(row.p.uuid,row.p.name));
+      li.appendChild(el("span","nm",row.p.name));li.appendChild(el("span","val",row.v));ol.appendChild(li);
+    });
+    card.appendChild(ol);return card;
+  }
+  function fill(id,list,n){
+    var b=$(id);b.textContent="";
+    list.forEach(function(c){
+      var top=players.filter(function(p){return c.g(p)>0}).sort(function(a,z){return c.g(z)-c.g(a)}).slice(0,n||5)
+        .map(function(p){return {p:p,v:val(c,c.g(p))}});
+      b.appendChild(board(c,top));
+    });
+  }
   function renderBoards(){
-    var b=$("boards");b.textContent="";
-    CATS.forEach(function(c){
-      var card=el("article","board box");card.style.setProperty("--c",c.c);
-      card.appendChild(el("h3",null,c.t));
-      var top=players.filter(function(p){return (p[c.k]||0)>0}).sort(function(a,z){return (z[c.k]||0)-(a[c.k]||0)}).slice(0,5);
-      if(!top.length){card.appendChild(el("span","empty","Noch niemand."))}
-      else{
-        var ol=el("ol");
-        top.forEach(function(p,i){
-          var li=el("li");li.appendChild(el("span","rk","#"+(i+1)));li.appendChild(headImg(p.uuid,p.name));
-          li.appendChild(el("span","nm",p.name));li.appendChild(el("span","val",val(c,p[c.k])));ol.appendChild(li);
-        });
-        card.appendChild(ol);
-      }
-      b.appendChild(card);
+    fill("boards",CATS);fill("boards-ores",ORES,3);fill("boards-own",OWN,3);
+    /* Seltene Items */
+    var rb=$("boards-rare");rb.textContent="";
+    var top=players.filter(function(p){return p.rareScore>0}).sort(function(a,z){return z.rareScore-a.rareScore}).slice(0,5)
+      .map(function(p){return {p:p,v:fmt.format(p.rareScore)+" P."}});
+    rb.appendChild(board({t:"Sammler-Punkte",c:"var(--violet)"},top));
+    var byItem={};
+    players.forEach(function(p){(p.rare||[]).forEach(function(id){(byItem[id]=byItem[id]||[]).push(p)})});
+    var ids=Object.keys(byItem).sort(function(a,z){return (rarePoints[z]||0)-(rarePoints[a]||0)}).slice(0,10);
+    var card=el("article","board box");card.style.setProperty("--c","var(--pink)");
+    card.appendChild(el("h3",null,"Seltenste Funde"));
+    if(!ids.length)card.appendChild(el("span","empty","Noch nichts Seltenes gefunden."));
+    else{
+      var ol=el("ol","rarelist");
+      ids.forEach(function(id){
+        var li=el("li");li.appendChild(el("span","rk",(rarePoints[id]||0)+" P."));
+        var nm=el("span","nm",RARENAME[id]||id.replace(/_/g," "));li.appendChild(nm);
+        li.appendChild(el("span","val",byItem[id].map(function(p){return p.name}).join(", ")));
+        ol.appendChild(li);
+      });
+      card.appendChild(ol);
+    }
+    rb.appendChild(card);
+    /* Wer war zuerst? */
+    var ml=$("milestones");ml.textContent="";
+    if(!milestones.length){ml.appendChild(el("p","hint","Noch keine Meilensteine."));}
+    milestones.forEach(function(m){
+      var row=el("div","ms box");
+      row.appendChild(headImg(m.uuid,m.name,32));
+      var t=el("div");t.appendChild(el("strong",null,m.title));
+      t.appendChild(el("span",null,m.name+" · "+new Date(m.at).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})+" Uhr"));
+      row.appendChild(t);ml.appendChild(row);
     });
   }
   function renderTable(){
@@ -554,7 +639,7 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
     var tb=$("tbody");tb.textContent="";
     players.slice().sort(function(a,z){return (z[sortKey]||0)-(a[sortKey]||0)}).forEach(function(p){
       var tr=el("tr"),td=el("td"),w=el("span","who");w.appendChild(headImg(p.uuid,p.name));w.appendChild(document.createTextNode(p.name));td.appendChild(w);tr.appendChild(td);
-      CATS.forEach(function(c){tr.appendChild(el("td",null,val(c,p[c.k])))});
+      CATS.forEach(function(c){tr.appendChild(el("td",null,val(c,c.g(p))))});
       tb.appendChild(tr);
     });
     $("tablebox").hidden=!players.length;
@@ -584,7 +669,7 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
     fetch(statsUrl()+(statsUrl().indexOf("?")<0?"?":"&")+"t="+Math.floor(Date.now()/60000),{cache:"no-store"})
       .then(function(r){if(!r.ok)throw 0;return r.json()})
       .then(function(d){
-        players=(d.players||[]);
+        players=(d.players||[]);milestones=d.milestones||[];rarePoints=d.rarePoints||{};
         var tot=function(k){return players.reduce(function(s,p){return s+(p[k]||0)},0)};
         $("t-players").textContent=fmt.format(players.length);
         $("t-hours").textContent=fmt.format(Math.round(hours(tot("play"))));
