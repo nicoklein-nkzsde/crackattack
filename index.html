@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CrackAttack 2</title>
+<meta name="description" content="CRACKATTACK 2: Minecraft-Server unter Freunden. Anleitung, Events und Live-Statistiken.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#cdeeff;--surface:#ffffff;--fg:#2d1c36;--muted:#5d4a69;--ink:#2d1c36;--on:#2d1c36;
+  --green:#5bd13f;--cyan:#35c3ff;--gold:#ffd23f;--lava:#ff5a2a;--pink:#ff4fa3;--violet:#9d7bff;
+  --sky-a:#7fd6ff;--sky-b:#a9e5ff;--sky-c:#d6f2ff;--cloud:#ffffff;
+  --px:"Press Start 2P","Courier New",monospace;
+  --body:"Pixelify Sans","Trebuchet MS",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#2d1c36;--surface:#412b50;--fg:#fff3dc;--muted:#cdb9da;--ink:#120a18;
+  --sky-a:#1d1030;--sky-b:#33204a;--sky-c:#47295f;--cloud:#6a4a85;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#2d1c36;--surface:#412b50;--fg:#fff3dc;--muted:#cdb9da;--ink:#120a18;
+  --sky-a:#1d1030;--sky-b:#33204a;--sky-c:#47295f;--cloud:#6a4a85;color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:18px;line-height:1.5;
+  padding-block:0 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin-inline:auto}
+a{color:inherit}
+img{max-width:100%}
+svg{shape-rendering:crispEdges}
+[hidden]{display:none!important}
+:focus-visible{outline:4px solid var(--violet);outline-offset:3px}
+
+.box{background:var(--surface);border:4px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.pxbtn{display:inline-block;font:400 12px/1.4 var(--px);color:var(--on);background:var(--gold);border:4px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:14px 18px;text-decoration:none;cursor:pointer;transition:transform .08s,box-shadow .08s}
+.pxbtn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.pxbtn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.pxbtn.green{background:var(--green)}.pxbtn.cyan{background:var(--cyan)}.pxbtn.pink{background:var(--pink)}.pxbtn.violet{background:var(--violet)}
+.pxbtn[aria-disabled="true"]{background:var(--muted);color:var(--surface);cursor:not-allowed;transform:none}
+
+nav{display:flex;align-items:center;justify-content:space-between;gap:14px 20px;padding-block:20px;flex-wrap:wrap}
+.brand{font:400 14px var(--px);text-decoration:none;text-shadow:3px 3px 0 var(--ink);color:var(--gold)}
+nav ul{display:flex;gap:8px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+nav ul a{display:block;font:400 10px var(--px);text-decoration:none;padding:9px 10px;background:var(--surface);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+nav ul a:hover{background:var(--gold);color:var(--on)}
+
+.hero{position:relative;overflow:hidden;border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);
+  background:linear-gradient(var(--sky-a) 0 30%,var(--sky-b) 30% 60%,var(--sky-c) 60%)}
+#sky{position:absolute;inset:0;width:100%;height:100%}
+.hero-in{position:relative;padding:34px 28px 0}
+.eyebrow{display:inline-block;font:400 10px/1.6 var(--px);background:var(--ink);color:var(--gold);padding:8px 10px;margin:0 0 22px}
+h1{font:400 clamp(28px,8.4vw,80px)/1.12 var(--px);margin:0;letter-spacing:.01em}
+h1 span{display:inline-block;text-shadow:.07em .07em 0 var(--ink)}
+h1 .row{display:block;white-space:nowrap}
+.lede{max-width:36ch;font-size:20px;margin:24px 0 0;color:var(--fg);font-weight:500;background:var(--surface);border:4px solid var(--ink);padding:12px 16px;box-shadow:4px 4px 0 var(--ink)}
+.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+.stage{position:relative;display:flex;align-items:flex-end;justify-content:flex-end;gap:clamp(8px,2.4vw,26px);padding:18px 6% 0 0;margin-top:-10px;min-height:40px}
+.stage svg{width:clamp(30px,6vw,60px);height:auto;aspect-ratio:1/2;display:block}
+#ground{display:block;width:100%;aspect-ratio:96/16}
+
+.livebar{position:relative;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin-top:22px;font:400 10px/1.6 var(--px);background:var(--surface);border:4px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px 14px;width:fit-content;max-width:100%}
+.dot{width:14px;height:14px;border:3px solid var(--ink);background:var(--muted);flex:none}
+.dot.on{background:var(--green);animation:blink 1.6s steps(2) infinite}
+.dot.off{background:var(--lava)}
+@keyframes blink{50%{opacity:.35}}
+
+.ticker{margin-top:40px;overflow:hidden;white-space:nowrap;background:var(--gold);color:var(--on);border:4px solid var(--ink);box-shadow:6px 6px 0 var(--ink);font:400 12px var(--px);padding-block:14px}
+.ticker div{display:inline-block;animation:slide 40s linear infinite}
+.ticker span{margin-right:26px}
+.ticker i{display:inline-block;width:10px;height:10px;margin-right:26px;background:var(--ink);vertical-align:middle}
+.ticker i:nth-of-type(3n+1){background:var(--lava)}.ticker i:nth-of-type(3n+2){background:var(--violet)}
+@keyframes slide{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker div,.dot.on{animation:none}}
+
+section{padding-top:72px;scroll-margin-top:10px}
+.sh{display:flex;align-items:center;gap:14px;margin:0 0 10px;flex-wrap:wrap}
+.sh h2{font:400 clamp(16px,3.6vw,26px)/1.4 var(--px);margin:0;text-wrap:balance}
+.sh::before{content:"";width:22px;height:22px;background:var(--c,var(--lava));border:4px solid var(--ink);box-shadow:3px 3px 0 var(--ink);flex:none}
+.sub{margin:0 0 28px;color:var(--muted);max-width:60ch}
+
+.steps{display:grid;gap:26px}
+.step{display:grid;grid-template-columns:96px minmax(0,1fr);overflow:hidden}
+.step .n{display:flex;align-items:flex-start;justify-content:center;padding-top:22px;font:400 30px var(--px);color:var(--on);background:var(--c);border-right:4px solid var(--ink)}
+.step .b{padding:20px 22px 24px;min-width:0}
+.step h3{font:400 14px/1.6 var(--px);margin:0 0 10px}
+.step p{margin:0 0 14px}
+.step p:last-child{margin-bottom:0}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 18px}
+.chip{font:400 10px/1.4 var(--px);padding:9px 11px;border:3px solid var(--ink);background:var(--c);color:var(--on)}
+.chip small{display:block;font:500 13px var(--body);opacity:.8;margin-bottom:3px}
+.hint{font-size:16px;color:var(--muted)}
+.ipbox{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;margin:4px 0 14px}
+.ipbox code{flex:1 1 220px;min-width:0;font:400 14px/1.4 var(--px);background:var(--ink);color:var(--green);padding:16px;overflow-x:auto;white-space:nowrap;border:4px solid var(--ink)}
+
+.events{display:grid;gap:20px}
+.ev{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:10px 22px;padding:18px 20px;align-items:start}
+.ev time{font:400 10px/1.8 var(--px);color:var(--muted)}
+.ev time strong{display:block;font:400 18px/1.4 var(--px);color:var(--fg)}
+.ev h3{margin:0 0 4px;font:400 13px/1.7 var(--px)}
+.ev p{margin:0;color:var(--muted)}
+.tag{font:400 9px/1.4 var(--px);padding:8px 9px;border:3px solid var(--ink);background:var(--surface);white-space:nowrap}
+.tag.next{background:var(--lava);color:var(--on)}
+.count{margin-top:10px;font:400 10px/1.7 var(--px);color:var(--fg)}
+
+/* Live */
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;padding:18px 20px;margin-bottom:26px}
+.status .big{display:flex;align-items:center;gap:12px;font:400 14px/1.4 var(--px)}
+.heads{display:flex;flex-wrap:wrap;gap:8px}
+.headchip{display:flex;align-items:center;gap:8px;font:600 16px var(--body);border:3px solid var(--ink);background:var(--bg);padding:4px 10px 4px 4px}
+.head{width:28px;height:28px;image-rendering:pixelated;display:block;background:var(--muted);flex:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px}
+.stat{padding:20px;background:var(--c);color:var(--on);border:4px solid var(--ink);box-shadow:6px 6px 0 var(--ink);min-width:0}
+.stat b{display:block;font:400 clamp(22px,4.6vw,34px)/1.2 var(--px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat span{font:400 10px/1.6 var(--px)}
+.boards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px;margin-top:34px}
+.board{overflow:hidden}
+.board h3{margin:0;font:400 11px/1.6 var(--px);padding:12px 14px;background:var(--c);color:var(--on);border-bottom:4px solid var(--ink)}
+.board ol{list-style:none;margin:0;padding:6px 0}
+.board li{display:grid;grid-template-columns:34px 28px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 14px}
+.board li+li{border-top:2px dashed color-mix(in srgb,var(--ink) 25%,transparent)}
+.board .rk{font:400 11px var(--px);color:var(--muted)}
+.board li:first-child .rk{color:var(--fg)}
+.board li:first-child .rk::before{content:"";display:inline-block;width:10px;height:10px;background:var(--gold);border:2px solid var(--ink);margin-right:4px;vertical-align:-1px}
+.board .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.board .val{font:400 10px var(--px);font-variant-numeric:tabular-nums;white-space:nowrap}
+.board .empty{display:block;padding:12px 14px;color:var(--muted)}
+.tablewrap{overflow-x:auto;margin-top:34px}
+table{border-collapse:collapse;width:100%;min-width:720px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font:400 9px/1.5 var(--px);background:var(--ink);color:var(--gold);cursor:pointer;user-select:none}
+thead th[aria-sort]::after{content:" \25BC"}
+tbody tr:nth-child(even){background:color-mix(in srgb,var(--ink) 7%,transparent)}
+td .who{display:inline-flex;align-items:center;gap:10px;font-weight:600}
+.note{margin:18px 0 0;color:var(--muted);font-size:16px}
+.maplink{margin-top:26px;display:flex;gap:14px;flex-wrap:wrap}
+
+.crew{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px}
+.card{overflow:hidden;display:flex;flex-direction:column}
+.card .pic{background:var(--c);border-bottom:4px solid var(--ink);padding:16px;display:flex;justify-content:center}
+.card .pic img{width:72px;height:72px;image-rendering:pixelated;display:block}
+.card .t{padding:12px 14px 14px}
+.card h3{margin:0;font:400 11px/1.6 var(--px);overflow-wrap:anywhere}
+.card p{margin:4px 0 0;color:var(--muted);font-size:16px}
+.card .live{color:var(--fg);font-weight:600}
+
+.seasons{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+.season{padding:20px;display:flex;flex-direction:column;gap:10px;min-height:170px}
+.season .num{font:400 38px/1 var(--px);color:var(--c);text-shadow:3px 3px 0 var(--ink)}
+.season.off .num{color:var(--muted);text-shadow:none}
+.season h3{margin:0;font:400 12px/1.6 var(--px)}
+.season p{margin:0;color:var(--muted)}
+.season .pxbtn{margin-top:auto;align-self:flex-start;font-size:10px;padding:11px 13px}
+
+.rules{list-style:none;margin:0;padding:0;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rules li{padding:16px 18px;display:flex;gap:14px}
+.rules li::before{content:"";flex:none;width:14px;height:14px;margin-top:6px;background:var(--c);border:3px solid var(--ink)}
+.faq{display:grid;gap:16px}
+.faq summary{cursor:pointer;font:400 11px/1.8 var(--px);padding:16px 18px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--lava)}
+.faq details[open] summary::after{content:"-"}
+.faq details p{margin:0;padding:0 18px 18px}
+code.k{font:400 12px var(--px);background:var(--ink);color:var(--gold);padding:2px 6px}
+
+footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:15px}
+
+@media (max-width:700px){
+  .step{grid-template-columns:minmax(0,1fr)}
+  .step .n{border-right:0;border-bottom:4px solid var(--ink);padding:12px 0 12px 22px;justify-content:flex-start}
+  .ev{grid-template-columns:minmax(0,1fr) auto}
+  .ev time{grid-column:1/-1}
+  .hero-in{padding:24px 16px 0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="#top">CRACKATTACK 2</a>
+    <ul>
+      <li><a href="#start">Anleitung</a></li>
+      <li><a href="#live">Live-Stats</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#crew">Crew</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero" id="top">
+    <svg id="sky" viewBox="0 0 96 48" preserveAspectRatio="xMidYMin slice" aria-hidden="true"></svg>
+    <div class="hero-in">
+      <p class="eyebrow">Staffel 2 · Minecraft <span data-cfg="mc"></span> · ab 24.10.2026</p>
+      <h1 id="logo" aria-label="CrackAttack 2"><span class="row">CRACK</span><span class="row">ATTACK 2</span></h1>
+      <p class="lede">Eine Welt, eine Handvoll Freunde, null Plan. Wer baut am meisten ab, wer stirbt am öftesten? Steht alles unten.</p>
+      <div class="cta">
+        <a class="pxbtn green" href="#start">So kommst du rein</a>
+        <a class="pxbtn pink" href="#live">Live-Stats</a>
+        <a class="pxbtn cyan" id="maptop" href="#" target="_blank" rel="noopener">Weltkarte</a>
+      </div>
+      <div class="livebar" aria-live="polite"><span class="dot" id="hdot"></span><span id="htext">Server-Status wird geladen ...</span></div>
+      <div class="stage" id="stage" aria-hidden="true"></div>
+    </div>
+    <svg id="ground" viewBox="0 0 96 16" preserveAspectRatio="none" aria-hidden="true"></svg>
+  </header>
+
+  <div class="ticker" aria-hidden="true">
+    <div>
+      <span>CrackAttack 2</span><i></i><span>20 Slots</span><i></i><span>Voice Chat</span><i></i><span>Live-Stats</span><i></i><span>/safespace</span><i></i><span>Eine Welt</span><i></i>
+      <span>CrackAttack 2</span><i></i><span>20 Slots</span><i></i><span>Voice Chat</span><i></i><span>Live-Stats</span><i></i><span>/safespace</span><i></i><span>Eine Welt</span><i></i>
+    </div>
+  </div>
+
+  <section id="start">
+    <div class="sh" style="--c:var(--green)"><h2>So kommst du rein</h2></div>
+    <p class="sub">Keine Whitelist, keine Anmeldung. Richtige Version starten, IP eintragen, fertig.</p>
+    <div class="steps">
+      <article class="step box">
+        <div class="n" style="--c:var(--cyan)">1</div>
+        <div class="b">
+          <h3>Minecraft <span data-cfg="mc"></span> starten</h3>
+          <p>Normales Minecraft Java reicht. Wichtig ist nur die Version, sonst lässt dich der Server nicht rein.</p>
+          <div class="chips">
+            <div class="chip" style="--c:var(--green)"><small>Minecraft</small><span data-cfg="mc"></span></div>
+            <div class="chip" style="--c:var(--cyan)"><small>Client</small>Vanilla oder Fabric</div>
+            <div class="chip" style="--c:var(--gold)"><small>Slots</small>20</div>
+          </div>
+          <p class="hint">Im Launcher unter Installationen eine Installation mit Version <span data-cfg="mc"></span> anlegen.</p>
+        </div>
+      </article>
+      <article class="step box">
+        <div class="n" style="--c:var(--gold)">2</div>
+        <div class="b">
+          <h3>Voice Chat (empfohlen)</h3>
+          <p>Mit Simple Voice Chat hörst du die anderen, wenn sie in deiner Nähe sind. Ohne die Mod kannst du trotzdem spielen.</p>
+          <p class="cta" style="margin-top:0"><a class="pxbtn" href="https://modrinth.com/plugin/simple-voice-chat" target="_blank" rel="noopener">Voice Chat auf Modrinth</a>
+          <a class="pxbtn violet" id="packbtn" href="#" target="_blank" rel="noopener">Modpack</a></p>
+          <p class="hint">Am einfachsten mit der <a href="https://modrinth.com/app" target="_blank" rel="noopener">Modrinth App</a>: Fabric-Profil für <span data-cfg="mc"></span> anlegen, Simple Voice Chat hinzufügen. Im Spiel stellst du das Mikro mit der Taste V ein.</p>
+        </div>
+      </article>
+      <article class="step box" id="ip">
+        <div class="n" style="--c:var(--pink)">3</div>
+        <div class="b">
+          <h3>Server hinzufügen</h3>
+          <p>Mehrspieler, Server hinzufügen, diese Adresse einfügen:</p>
+          <div class="ipbox"><code id="ipcode"></code><button class="pxbtn green" type="button" id="copy">Kopieren</button></div>
+          <p class="hint">Der Port ist der Standard-Port, du musst ihn nicht dazuschreiben.</p>
+        </div>
+      </article>
+      <article class="step box">
+        <div class="n" style="--c:var(--violet)">4</div>
+        <div class="b">
+          <h3>In der Lobby warten</h3>
+          <p>Vor dem Start stehst du im Spawn-Bereich und kannst nichts abbauen. Sobald der Countdown durch ist, geht die Welt auf und alle starten gleichzeitig.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="live">
+    <div class="sh" style="--c:var(--gold)"><h2>Live vom Server</h2></div>
+    <p class="sub">Wer ist online, wer hat die meisten Diamanten abgebaut, wer stirbt am öftesten. Die Ranglisten kommen direkt aus den Spielstatistiken.</p>
+
+    <div class="status box" aria-live="polite">
+      <div class="big"><span class="dot" id="sdot"></span><span id="stext">Wird geladen ...</span></div>
+      <div class="heads" id="onlineheads"></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat" style="--c:var(--green)"><b id="t-players">-</b><span>SPIELER</span></div>
+      <div class="stat" style="--c:var(--cyan)"><b id="t-hours">-</b><span>STUNDEN GESPIELT</span></div>
+      <div class="stat" style="--c:var(--pink)"><b id="t-dia">-</b><span>DIAMANTEN</span></div>
+      <div class="stat" style="--c:var(--gold)"><b id="t-deaths">-</b><span>TODE</span></div>
+    </div>
+
+    <div class="boards" id="boards"></div>
+
+    <div class="tablewrap box" id="tablebox" hidden>
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p class="note" id="statnote">Statistiken werden geladen ...</p>
+    <div class="maplink"><a class="pxbtn cyan" id="mapbtn" href="#" target="_blank" rel="noopener">Live-Weltkarte öffnen</a></div>
+  </section>
+
+  <section id="events">
+    <div class="sh" style="--c:var(--lava)"><h2>Events</h2></div>
+    <p class="sub">Wann es knallt. Neue Termine kommen hier rein, sobald sie stehen.</p>
+    <div class="events">
+      <article class="ev box">
+        <time datetime="2026-10-24T20:00">Sa., 24. Okt.<strong>20:00</strong></time>
+        <div>
+          <h3>Staffelstart</h3>
+          <p>Alle warten in der Lobby, dann läuft der Countdown. Alle starten am selben Punkt, ohne Ausrüstung.</p>
+          <div class="count" id="count">Start in ...</div>
+        </div>
+        <span class="tag next">Nächstes</span>
+      </article>
+      <article class="ev box">
+        <time datetime="2026-10-31T20:30">Sa., 31. Okt.<strong>20:30</strong></time>
+        <div>
+          <h3>Halloween-Kopfgeldjagd</h3>
+          <p>Eine Person trägt ein Kopfgeld. Wer sie erwischt, kassiert die Belohnung.</p>
+        </div>
+        <span class="tag">Geplant</span>
+      </article>
+      <article class="ev box">
+        <time datetime="2026-11-14T19:00">Sa., 14. Nov.<strong>19:00</strong></time>
+        <div>
+          <h3>Bauwettbewerb</h3>
+          <p>Zwei Stunden, ein Thema, eine Jury aus allen anderen.</p>
+        </div>
+        <span class="tag">Geplant</span>
+      </article>
+    </div>
+  </section>
+
+  <section id="crew">
+    <div class="sh" style="--c:var(--cyan)"><h2>Die Crew</h2></div>
+    <p class="sub">Alle, die schon auf dem Server waren. Sortiert nach Spielzeit.</p>
+    <div class="crew" id="crewgrid"><p class="hint">Wird geladen ...</p></div>
+  </section>
+
+  <section id="staffeln">
+    <div class="sh" style="--c:var(--violet)"><h2>Staffeln</h2></div>
+    <p class="sub">Jede beendete Welt kommt hier als Download, damit ihr sie später noch einmal ablaufen könnt.</p>
+    <div class="seasons">
+      <article class="season box off">
+        <div class="num">01</div>
+        <h3>CrackAttack 1</h3>
+        <p>Abgeschlossen. Der Download kommt hierhin.</p>
+      </article>
+      <article class="season box" style="--c:var(--green)">
+        <div class="num">02</div>
+        <h3>CrackAttack 2</h3>
+        <p>Startet am 24. Oktober 2026 um 20:00.</p>
+        <a class="pxbtn green" href="#start">Mitspielen</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="regeln">
+    <div class="sh" style="--c:var(--pink)"><h2>Spielregeln</h2></div>
+    <p class="sub">Wenige Regeln, dafür gelten sie für alle.</p>
+    <ul class="rules">
+      <li class="box" style="--c:var(--green)">Kein Griefing an fremden Bauten, auch nicht zum Spaß. Alles wird protokolliert und kann zurückgesetzt werden.</li>
+      <li class="box" style="--c:var(--cyan)">Keine Hacks, kein Xray, keine Cheat-Clients.</li>
+      <li class="box" style="--c:var(--gold)">PvP ist an. Mit <code class="k">/safespace</code> schaltest du dich friedlich. Nach einem Treffer gilt 15 Sekunden Kampfsperre, wer da rausgeht, wird bestraft.</li>
+      <li class="box" style="--c:var(--pink)">Streit klären wir im Voice, nicht im Chat.</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <div class="sh" style="--c:var(--lava)"><h2>FAQ</h2></div>
+    <p class="sub">Wenn es hakt, schau zuerst hier nach.</p>
+    <div class="faq">
+      <details class="box"><summary>Ich komme nicht auf den Server</summary>
+        <p>Prüfe die Version: Es muss genau <span data-cfg="mc"></span> sein. Schau oben auf den Status. Steht dort offline, ist der Server gerade aus.</p></details>
+      <details class="box"><summary>Wie funktioniert der Voice Chat?</summary>
+        <p>Installiere Simple Voice Chat für <span data-cfg="mc"></span> (Schritt 2). Im Spiel öffnet die Taste V die Einstellungen. Du hörst alle, die in deiner Nähe sind.</p></details>
+      <details class="box"><summary>Was macht /safespace?</summary>
+        <p>Damit schaltest du PvP für dich aus oder wieder an. Dazwischen liegen zwei Minuten Wartezeit. Mobs greifen dich trotzdem an.</p></details>
+      <details class="box"><summary>Gibt es eine Karte?</summary>
+        <p>Ja, die Live-Weltkarte zeigt die ganze Welt und wo gerade gespielt wird. Den Link findest du bei den Live-Stats.</p></details>
+      <details class="box"><summary>Wie aktuell sind die Ranglisten?</summary>
+        <p>Der Online-Status kommt sofort. Die Ranglisten werden etwa alle fünf Minuten aktualisiert. Minecraft speichert die Statistiken beim Speichern der Welt und beim Ausloggen.</p></details>
+      <details class="box"><summary>Darf ich eigene Mods nutzen?</summary>
+        <p>Mods, die nur die Leistung oder Optik verbessern, wie Sodium, sind in Ordnung. Alles, was dir einen unfairen Vorteil gibt, nicht.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <span>CrackAttack · privates Projekt unter Freunden</span>
+    <span>Kein offizielles Minecraft-Produkt. Nicht von Mojang oder Microsoft genehmigt und nicht mit Mojang oder Microsoft verbunden.</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  /* ====== HIER ANPASSEN ====== */
+  var CFG={
+    ip:"2.28.206.190",
+    map:"http://2.28.206.190:8100",
+    mc:"26.3",
+    modpackUrl:"",          // z. B. https://modrinth.com/modpack/crackattack
+    statsUrl:""             // leer lassen: wird auf GitHub Pages automatisch gefunden
+  };
+  /* =========================== */
+
+  var NS="http://www.w3.org/2000/svg";
+  function $(id){return document.getElementById(id)}
+  function rnd(seed){var s=seed>>>0;return function(){s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296}}
+  function hash(str){var x=2166136261;for(var i=0;i<str.length;i++){x^=str.charCodeAt(i);x=Math.imul(x,16777619)}return x>>>0}
+  function rect(p,x,y,w,h,f){var r=document.createElementNS(NS,"rect");r.setAttribute("x",x);r.setAttribute("y",y);r.setAttribute("width",w);r.setAttribute("height",h);r.setAttribute("fill",f);p.appendChild(r)}
+  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+  var fmt=new Intl.NumberFormat("de-DE");
+  function headImg(uuid,name,size){
+    var i=el("img","head");i.alt="";i.loading="lazy";i.width=size||28;i.height=size||28;
+    i.src="https://mc-heads.net/avatar/"+encodeURIComponent(uuid||name)+"/"+((size||28)*2);
+    i.onerror=function(){i.style.visibility="hidden"};
+    return i;
+  }
+
+  /* Konfiguration */
+  document.querySelectorAll("[data-cfg]").forEach(function(e){e.textContent=CFG[e.getAttribute("data-cfg")]});
+  $("ipcode").textContent=CFG.ip;
+  $("mapbtn").href=CFG.map;$("maptop").href=CFG.map;
+  var pb=$("packbtn");
+  if(CFG.modpackUrl){pb.href=CFG.modpackUrl}else{pb.setAttribute("aria-disabled","true");pb.removeAttribute("target");pb.textContent="Modpack folgt";pb.addEventListener("click",function(e){e.preventDefault()})}
+  var cb=$("copy");
+  cb.addEventListener("click",function(){
+    function say(t){cb.textContent=t;setTimeout(function(){cb.textContent="Kopieren"},1600)}
+    function sel(){var r=document.createRange();r.selectNodeContents($("ipcode"));var s=getSelection();s.removeAllRanges();s.addRange(r);say("Markiert")}
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(CFG.ip).then(function(){say("Kopiert")},sel);else sel();
+  });
+
+  /* Logo */
+  var cols=["#ff5a2a","#ffd23f","#5bd13f","#35c3ff","#ff4fa3","#9d7bff"],li=0;
+  document.querySelectorAll("#logo .row").forEach(function(row){
+    var t=row.textContent;row.textContent="";
+    t.split("").forEach(function(ch){var s=el("span",null,ch);if(ch!==" ")s.style.color=cols[li++%cols.length];else s.innerHTML="&nbsp;";row.appendChild(s)});
+  });
+
+  /* Himmel */
+  var sky=$("sky");
+  [[6,5,14],[40,9,18],[72,4,16],[24,22,12],[58,26,15],[84,20,10]].forEach(function(c){
+    var g=document.createElementNS(NS,"g");
+    rect(g,c[0],c[1]+2,c[2],2,"var(--cloud)");rect(g,c[0]+3,c[1]+1,c[2]-6,1,"var(--cloud)");rect(g,c[0]+5,c[1],Math.max(1,c[2]-12),1,"var(--cloud)");
+    sky.appendChild(g);
+  });
+
+  /* Boden */
+  var gr=$("ground"),R=rnd(7);
+  function pick(a){return a[Math.floor(R()*a.length)]}
+  var crack={},x=58;
+  for(var y=1;y<16;y++){crack[x+","+y]=1;if(R()<.45)crack[(x+1)+","+y]=1;x+=Math.floor(R()*3)-1;if(x<50)x=50;if(x>66)x=66}
+  for(var y2=0;y2<16;y2++)for(var cx=0;cx<96;cx++){
+    var c;
+    if(y2===0)c=pick(["#5bd13f","#5bd13f","#4cbd33","#6fe050"]);
+    else if(y2===1)c=R()<.45?pick(["#5bd13f","#4cbd33"]):pick(["#9b6a3b","#84582f"]);
+    else if(y2<5)c=pick(["#9b6a3b","#9b6a3b","#84582f","#b07a45"]);
+    else{c=pick(["#8d8d99","#8d8d99","#7a7a87","#a1a1ad"]);var o=R();if(o<.018)c="#ffd23f";else if(o<.03)c="#35c3ff";else if(o<.042)c="#ff4fa3"}
+    if(crack[cx+","+y2])c=(R()<.4)?"#ffd23f":"#ff5a2a";
+    rect(gr,cx,y2,1.03,1.03,c);
+  }
+
+  /* Pixel-Figuren */
+  var skinC=["#c98f6b","#e3b38d","#8a5a3c","#f0c9a6","#6b4429"],hairC=["#2b1b12","#6b3d1f","#e0a82e","#1e2a33","#d04a1a","#7a4aa0","#2aa6d0"],shirtC=["#5bd13f","#ff5a2a","#35c3ff","#ff4fa3","#ffd23f","#9d7bff"];
+  function figure(name){
+    var h=hash(name),p=function(a,o){return a[(h>>>o)%a.length]};
+    var sk=p(skinC,0),hr=p(hairC,3),sh=p(shirtC,6),pa=p(["#3a4fb0","#2d2d3a","#6b3d1f","#2f7a4f"],9),g=[],i,j;
+    for(i=0;i<16;i++){g.push([]);for(j=0;j<8;j++)g[i].push(null)}
+    for(i=0;i<8;i++)for(j=0;j<8;j++)g[i][j]=sk;
+    for(j=0;j<8;j++){g[0][j]=hr;g[1][j]=hr}
+    if((h>>>11)%2){g[2][0]=hr;g[2][7]=hr;g[3][0]=hr;g[3][7]=hr}
+    if((h>>>13)%3===0){g[2][1]=hr;g[2][6]=hr}
+    g[4][1]="#fff";g[4][2]="#2a3a6a";g[4][5]="#2a3a6a";g[4][6]="#fff";g[6][3]="#7a3b2a";g[6][4]="#7a3b2a";
+    for(i=8;i<12;i++)for(j=0;j<8;j++)g[i][j]=(j===0||j===7)?(i>9?sk:sh):sh;
+    for(i=12;i<16;i++)for(j=1;j<7;j++)g[i][j]=(j===3||j===4)?null:(i===15?"#555566":pa);
+    var svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 8 16");
+    for(i=0;i<16;i++)for(j=0;j<8;j++)if(g[i][j])rect(svg,j,i,1.03,1.03,g[i][j]);
+    return svg;
+  }
+  function stage(names){var s=$("stage");s.textContent="";names.slice(0,5).forEach(function(n){s.appendChild(figure(n))})}
+  stage(["Ashwalker","Pixelfuchs","Kohlekopf","Mondlicht","Zwiebel"]);
+
+  /* ---------- Live-Status (sofort, ueber mcstatus.io) ---------- */
+  var online={};
+  function setStatus(on,text){
+    ["hdot","sdot"].forEach(function(id){$(id).className="dot "+(on===null?"":on?"on":"off")});
+    $("htext").textContent=text;$("stext").textContent=text;
+  }
+  function loadStatus(){
+    fetch("https://api.mcstatus.io/v2/status/java/"+encodeURIComponent(CFG.ip),{cache:"no-store"})
+      .then(function(r){if(!r.ok)throw 0;return r.json()})
+      .then(function(d){
+        online={};
+        var box=$("onlineheads");box.textContent="";
+        if(!d.online){setStatus(false,"OFFLINE");renderCrew();return}
+        var list=(d.players&&d.players.list)||[];
+        setStatus(true,"ONLINE · "+d.players.online+"/"+d.players.max);
+        list.forEach(function(p){
+          online[(p.name_clean||p.name_raw||"").toLowerCase()]=1;
+          var chip=el("span","headchip");chip.appendChild(headImg(p.uuid,p.name_clean));chip.appendChild(document.createTextNode(p.name_clean));box.appendChild(chip);
+        });
+        if(!list.length&&d.players.online===0)box.appendChild(el("span","hint","Gerade spielt niemand."));
+        renderCrew();
+      })
+      .catch(function(){setStatus(null,"Status gerade nicht abrufbar")});
+  }
+  loadStatus();setInterval(loadStatus,60000);
+
+  /* ---------- Statistiken (stats.json, alle 5 Min. vom Server) ---------- */
+  function statsUrl(){
+    if(CFG.statsUrl)return CFG.statsUrl;
+    var h=location.hostname;
+    if(/\.github\.io$/i.test(h)){
+      var owner=h.split(".")[0],seg=location.pathname.split("/").filter(Boolean)[0];
+      var repo=(seg&&!/\.html?$/i.test(seg))?seg:h;
+      return "https://raw.githubusercontent.com/"+owner+"/"+repo+"/stats/stats.json";
+    }
+    return "stats.json";
+  }
+  function hours(sec){return sec/3600}
+  function fmtTime(sec){var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?h+" h "+m+" min":m+" min"}
+  var CATS=[
+    {k:"play",t:"Spielzeit",c:"var(--green)",f:fmtTime},
+    {k:"dia",t:"Diamanten abgebaut",c:"var(--cyan)"},
+    {k:"mined",t:"Blöcke abgebaut",c:"var(--gold)"},
+    {k:"km",t:"Gelaufen (km)",c:"var(--violet)",f:function(v){return fmt.format(v)+" km"}},
+    {k:"mobs",t:"Mob-Kills",c:"var(--lava)"},
+    {k:"pvp",t:"Spieler-Kills",c:"var(--pink)"},
+    {k:"deaths",t:"Meiste Tode",c:"var(--pink)"},
+    {k:"debris",t:"Antiker Schutt",c:"var(--violet)"},
+    {k:"jumps",t:"Sprünge",c:"var(--cyan)"}
+  ];
+  var players=[],sortKey="play";
+  function val(c,v){return c.f?c.f(v||0):fmt.format(v||0)}
+
+  function renderBoards(){
+    var b=$("boards");b.textContent="";
+    CATS.forEach(function(c){
+      var card=el("article","board box");card.style.setProperty("--c",c.c);
+      card.appendChild(el("h3",null,c.t));
+      var top=players.filter(function(p){return (p[c.k]||0)>0}).sort(function(a,z){return (z[c.k]||0)-(a[c.k]||0)}).slice(0,5);
+      if(!top.length){card.appendChild(el("span","empty","Noch niemand."))}
+      else{
+        var ol=el("ol");
+        top.forEach(function(p,i){
+          var li=el("li");li.appendChild(el("span","rk","#"+(i+1)));li.appendChild(headImg(p.uuid,p.name));
+          li.appendChild(el("span","nm",p.name));li.appendChild(el("span","val",val(c,p[c.k])));ol.appendChild(li);
+        });
+        card.appendChild(ol);
+      }
+      b.appendChild(card);
+    });
+  }
+  function renderTable(){
+    var th=$("thead");th.textContent="";
+    var head=el("th",null,"Spieler");th.appendChild(head);
+    CATS.forEach(function(c){
+      var h=el("th",null,c.t.replace("Meiste ",""));h.tabIndex=0;h.scope="col";
+      if(c.k===sortKey)h.setAttribute("aria-sort","descending");
+      function go(){sortKey=c.k;renderTable()}
+      h.addEventListener("click",go);h.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
+      th.appendChild(h);
+    });
+    var tb=$("tbody");tb.textContent="";
+    players.slice().sort(function(a,z){return (z[sortKey]||0)-(a[sortKey]||0)}).forEach(function(p){
+      var tr=el("tr"),td=el("td"),w=el("span","who");w.appendChild(headImg(p.uuid,p.name));w.appendChild(document.createTextNode(p.name));td.appendChild(w);tr.appendChild(td);
+      CATS.forEach(function(c){tr.appendChild(el("td",null,val(c,p[c.k])))});
+      tb.appendChild(tr);
+    });
+    $("tablebox").hidden=!players.length;
+  }
+  var accent=["var(--green)","var(--cyan)","var(--pink)","var(--gold)","var(--violet)","var(--lava)"];
+  function renderCrew(){
+    if(!players.length)return;
+    var g=$("crewgrid");g.textContent="";
+    players.forEach(function(p,i){
+      var a=el("article","card box"),pic=el("div","pic");pic.style.setProperty("--c",accent[i%accent.length]);
+      var im=headImg(p.uuid,p.name,72);im.className="";pic.appendChild(im);
+      var t=el("div","t");t.appendChild(el("h3",null,p.name));
+      var isOn=online[p.name.toLowerCase()];
+      var info=isOn?"Gerade online":(p.op?"Server-Admin · ":"")+fmtTime(p.play)+" gespielt";
+      var pp=el("p",isOn?"live":null,info);t.appendChild(pp);
+      a.appendChild(pic);a.appendChild(t);g.appendChild(a);
+    });
+  }
+  function ago(iso){
+    var d=Math.round((Date.now()-new Date(iso).getTime())/60000);
+    if(isNaN(d))return "";
+    if(d<1)return "gerade eben";if(d<60)return "vor "+d+" Min.";
+    if(d<1440)return "vor "+Math.round(d/60)+" Std.";
+    return "am "+new Date(iso).toLocaleDateString("de-DE");
+  }
+  function loadStats(){
+    fetch(statsUrl()+(statsUrl().indexOf("?")<0?"?":"&")+"t="+Math.floor(Date.now()/60000),{cache:"no-store"})
+      .then(function(r){if(!r.ok)throw 0;return r.json()})
+      .then(function(d){
+        players=(d.players||[]);
+        var tot=function(k){return players.reduce(function(s,p){return s+(p[k]||0)},0)};
+        $("t-players").textContent=fmt.format(players.length);
+        $("t-hours").textContent=fmt.format(Math.round(hours(tot("play"))));
+        $("t-dia").textContent=fmt.format(tot("dia"));
+        $("t-deaths").textContent=fmt.format(tot("deaths"));
+        renderBoards();renderTable();renderCrew();
+        if(players.length)stage(players.map(function(p){return p.name}));
+        $("statnote").textContent="Letzte Änderung der Statistiken: "+(d.updated?ago(d.updated):"unbekannt")+". Spalten in der Tabelle anklicken zum Sortieren.";
+      })
+      .catch(function(){$("statnote").textContent="Statistiken gerade nicht erreichbar."});
+  }
+  loadStats();setInterval(loadStats,300000);
+
+  /* Countdown Staffelstart (24.10.2026, 20:00 Berlin = 18:00 UTC) */
+  var target=Date.UTC(2026,9,24,18,0,0),cel=$("count");
+  function tick(){
+    var d=target-Date.now();
+    if(d<=0){cel.textContent="Die Staffel läuft.";return}
+    var days=Math.floor(d/864e5),hh=Math.floor(d%864e5/36e5),mm=Math.floor(d%36e5/6e4);
+    cel.textContent="Start in "+days+" Tagen, "+hh+" Std., "+mm+" Min.";
+  }
+  tick();setInterval(tick,30000);
+})();
+</script>
+</body>
+</html>
