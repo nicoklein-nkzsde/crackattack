@@ -197,6 +197,7 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
     <ul>
       <li><a href="#start">Anleitung</a></li>
       <li><a href="#live">Live-Stats</a></li>
+      <li><a href="#boerse">Börse</a></li>
       <li><a href="#events">Events</a></li>
       <li><a href="#crew">Crew</a></li>
       <li><a href="#faq">FAQ</a></li>
@@ -313,6 +314,13 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
     </div>
     <p class="note" id="statnote">Statistiken werden geladen ...</p>
     <div class="maplink"><a class="pxbtn cyan" id="mapbtn" href="#" target="_blank" rel="noopener">Live-Weltkarte öffnen</a></div>
+  </section>
+
+  <section id="boerse">
+    <div class="sh" style="--c:var(--green)"><h2>Börse</h2></div>
+    <p class="sub">Die Shop-Preise leben: Was viele verkaufen, wird billiger. Was kaum jemand hat, wird teurer. Mit der Zeit erholen sich die Kurse wieder. Die Verkaufskiste an der Bank hat immer den Live-Kurs, der /shop übernimmt die Kurse jeden Morgen um 5 Uhr.</p>
+    <div class="boards" id="boards-boerse"><p class="hint">Kurse werden geladen ...</p></div>
+    <p class="note" id="boersenote"></p>
   </section>
 
   <section id="events">
@@ -692,7 +700,36 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
     cel.textContent="Start in "+days+" Tagen, "+hh+" Std., "+mm+" Min.";
   }
   tick();setInterval(tick,30000);
+  /* ---------- Boerse (boerse.json, alle 5 Min. vom Server) ---------- */
+  function loadBoerse(){
+    var u=statsUrl().replace(/stats\.json$/,"boerse.json");
+    fetch(u+(u.indexOf("?")<0?"?":"&")+"t="+Math.floor(Date.now()/60000),{cache:"no-store"}).then(function(r){return r.json()}).then(function(b){
+      function nm(id){return id.split("_").map(function(w){return w.charAt(0).toUpperCase()+w.slice(1)}).join(" ")}
+      function geld(v){return v.toFixed(2).replace(".",",")+" $"}
+      function board(title,c,list){
+        var d=document.createElement("div");d.className="board box";d.style.setProperty("--c",c);
+        var hh=document.createElement("h3");hh.textContent=title;d.appendChild(hh);
+        var ol=document.createElement("ol");
+        if(!list.length){var e=document.createElement("span");e.className="empty";e.textContent="Gerade alles beim Grundpreis";d.appendChild(e)}
+        list.slice(0,10).forEach(function(x,i){
+          var li=document.createElement("li");
+          var a=document.createElement("span");a.className="rk";a.textContent="#"+(i+1);
+          var ic=document.createElement("span");
+          var n=document.createElement("span");n.className="nm";n.textContent=nm(x.id);n.title=x.v>0?"Verkauf "+geld(x.v)+" (Grundpreis "+geld(x.vb)+")":"Kauf "+geld(x.k);
+          var v=document.createElement("span");v.className="val";v.textContent=(x.v>0?geld(x.v):geld(x.k))+"  "+(x.f>100?"+":"")+(x.f-100)+"%";
+          li.appendChild(a);li.appendChild(ic);li.appendChild(n);li.appendChild(v);ol.appendChild(li);
+        });
+        d.appendChild(ol);return d;
+      }
+      var box=document.getElementById("boards-boerse");box.innerHTML="";
+      box.appendChild(board("Kurs steigt","var(--green)",b.top||[]));
+      box.appendChild(board("Kurs fällt","var(--lava)",b.flop||[]));
+      document.getElementById("boersenote").textContent="Stand: "+new Date(b.updated).toLocaleString("de-DE")+" · Preise ohne 5 % Steuer";
+    }).catch(function(){document.getElementById("boards-boerse").innerHTML='<p class="hint">Kurse gerade nicht abrufbar.</p>'});
+  }
+  loadBoerse();setInterval(loadBoerse,300000);
 })();
+
 </script>
 </body>
 </html>
