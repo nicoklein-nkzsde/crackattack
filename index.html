@@ -546,6 +546,8 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
   function K(k){return function(p){return p[k]||0}}
   function O(g,k){return function(p){return (p[g]&&p[g][k])||0}}
   var CATS=[
+    {g:K("geld"),k:"geld",t:"Reichste Spieler",c:"var(--gold)",f:function(v){return fmt.format(Math.round(v))+" $"}},
+    {g:K("adv"),k:"adv",t:"Meiste Achievements",c:"var(--green)"},
     {g:K("play"),k:"play",t:"Spielzeit",c:"var(--green)",f:fmtTime},
     {g:K("dia"),k:"dia",t:"Diamanten abgebaut",c:"var(--cyan)"},
     {g:K("mined"),k:"mined",t:"Blöcke abgebaut",c:"var(--gold)"},
@@ -553,7 +555,6 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
     {g:K("mobs"),k:"mobs",t:"Mob-Kills",c:"var(--lava)"},
     {g:K("pvp"),k:"pvp",t:"Spieler-Kills",c:"var(--pink)"},
     {g:K("deaths"),k:"deaths",t:"Meiste Tode",c:"var(--pink)"},
-    {g:K("adv"),k:"adv",t:"Fortschritte",c:"var(--green)"},
     {g:K("jumps"),k:"jumps",t:"Sprünge",c:"var(--cyan)"}
   ];
   var ORES=[
