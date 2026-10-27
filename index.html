@@ -318,10 +318,10 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
 
   <section id="boerse">
     <div class="sh" style="--c:var(--green)"><h2>Börse</h2></div>
-    <p class="sub">Die Shop-Preise leben: Was viele verkaufen, wird billiger. Was kaum jemand hat, wird teurer. Mit der Zeit erholen sich die Kurse wieder. Die Verkaufskiste an der Bank hat immer den Live-Kurs, der /shop übernimmt die Kurse jeden Morgen um 5 Uhr.</p>
-    <div class="boards" id="boards-boerse"><p class="hint">Kurse werden geladen ...</p></div>
-    <p class="note" id="boersenote"></p>
-    <p style="text-align:center;margin-top:14px"><a href="boerse.html" style="display:inline-block;padding:10px 18px;border-radius:10px;background:linear-gradient(90deg,#b14cff,#39ff88);color:#07090f;font-weight:800;text-decoration:none">Zur Börse: alle Kurse &amp; Charts →</a></p>
+    <p class="sub">Die Kurse leben wie echte Aktien: Zufall, Trends, Eilmeldungen und was ihr kauft und verkauft. Von −90 % bis +300 %. Verkaufskiste und /shop haben immer den Live-Kurs. Klick auf ein Item für seine Kurve.</p>
+    <iframe id="boerseframe" src="boerse.html" title="CRACKATTACK Börse" loading="lazy" style="width:100%;height:1500px;border:4px solid var(--ink);display:block;background:#07090f"></iframe>
+    <p style="text-align:center;margin-top:14px"><a href="boerse.html" target="_blank" rel="noopener" style="display:inline-block;padding:10px 18px;border-radius:10px;background:linear-gradient(90deg,#b14cff,#39ff88);color:#07090f;font-weight:800;text-decoration:none">Börse im Vollbild öffnen →</a></p>
+    <script>window.addEventListener("message",function(e){if(e.data&&e.data.caHoehe){var f=document.getElementById("boerseframe");if(f)f.style.height=(e.data.caHoehe+8)+"px";}});</script>
   </section>
 
   <section id="events">
@@ -704,6 +704,7 @@ footer{margin-top:80px;padding-top:20px;border-top:4px solid var(--ink);display:
   tick();setInterval(tick,30000);
   /* ---------- Boerse (boerse.json, alle 5 Min. vom Server) ---------- */
   function loadBoerse(){
+    if(!document.getElementById("boards-boerse"))return;
     var u=statsUrl().replace(/stats\.json$/,"boerse.json");
     fetch(u+(u.indexOf("?")<0?"?":"&")+"t="+Math.floor(Date.now()/60000),{cache:"no-store"}).then(function(r){return r.json()}).then(function(b){
       function nm(id){return id.split("_").map(function(w){return w.charAt(0).toUpperCase()+w.slice(1)}).join(" ")}
