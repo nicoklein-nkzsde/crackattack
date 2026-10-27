@@ -60,6 +60,7 @@ tr.sel td{background:#1b1430}
 .mehr{display:block;margin:12px auto 0;background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:8px 16px;border-radius:10px;cursor:pointer;font:inherit}
 .tip{position:fixed;pointer-events:none;background:#111827;border:1px solid var(--line);padding:6px 9px;border-radius:8px;font-size:12px;display:none;z-index:9}
 .leer{color:var(--mut);padding:30px;text-align:center}
+body.embed header{position:static}body.embed .back{display:none}body.embed main{padding-top:12px}
 </style>
 </head>
 <body>
@@ -117,13 +118,16 @@ tr.sel td{background:#1b1430}
 <div class="tip" id="tip"></div>
 <script>
 (function(){
+  var EMB=window.self!==window.top;if(EMB){document.body.classList.add("embed");
+    var mel=function(){try{parent.postMessage({caHoehe:document.documentElement.scrollHeight},"*")}catch(e){}};
+    if(window.ResizeObserver)new ResizeObserver(mel).observe(document.body);setInterval(mel,2000);}
   function base(){
     var h=location.hostname;
     if(/\.github\.io$/i.test(h)){var owner=h.split(".")[0],seg=location.pathname.split("/").filter(Boolean)[0];
       var repo=(seg&&!/\.html?$/i.test(seg))?seg:h;return "https://raw.githubusercontent.com/"+owner+"/"+repo+"/stats/";}
     return "";
   }
-  var B=base(),K=null,H=null,sel="CAX",range=168,sortKey="c24",sortDir=-1,tab="alle",limit=60;
+  var B=base(),K=null,H=null,sel="CAX",range=168,sortKey="c24",sortDir=-1,tab="alle",limit=(window.self!==window.top)?25:60;
   var DE={diamond:"Diamant",emerald:"Smaragd",iron:"Eisen",gold:"Gold",golden:"Gold",copper:"Kupfer",netherite:"Netherite",coal:"Kohle",redstone:"Redstone",lapis:"Lapis",quartz:"Quarz",oak:"Eiche",spruce:"Fichte",birch:"Birke",jungle:"Tropen",acacia:"Akazie",dark:"Schwarz",cherry:"Kirsch",mangrove:"Mangrove",bamboo:"Bambus",log:"Stamm",planks:"Bretter",wool:"Wolle",glass:"Glas",block:"Block",ingot:"Barren",ore:"Erz",stone:"Stein",sand:"Sand",snowball:"Schneeball",apple:"Apfel",book:"Buch",enchanted:"Verzaubertes",potion:"Trank",white:"Weiß",black:"Schwarz",red:"Rot",blue:"Blau",green:"Grün",yellow:"Gelb",purple:"Lila",pink:"Pink",orange:"Orange",gray:"Grau",light:"Hell",brown:"Braun",cyan:"Türkis",lime:"Hellgrün",magenta:"Magenta",concrete:"Beton",terracotta:"Keramik",slab:"Stufe",stairs:"Treppe",wall:"Mauer",bricks:"Ziegel",deepslate:"Tiefenschiefer",raw:"Roh",nugget:"Nugget",carrot:"Karotte",bread:"Brot",wheat:"Weizen",string:"Faden",gunpowder:"Schwarzpulver",leather:"Leder",feather:"Feder",bone:"Knochen",tnt:"TNT",pearl:"Perle",ender:"Ender",shulker:"Shulker",shell:"Schale",totem:"Totem",of:"",undying:"der Unsterblichkeit",elytra:"Elytren",sword:"Schwert",pickaxe:"Spitzhacke",axe:"Axt",shovel:"Schaufel",helmet:"Helm",chestplate:"Brustplatte",leggings:"Hose",boots:"Stiefel",bottle:"Flasche",experience:"Erfahrungs",firework:"Feuerwerks",rocket:"Rakete",wind:"Wind",charge:"Kugel"};
   function name(id){var p=id.split("#")[0].split("_");return p.map(function(w){var d=DE[w];return d!==undefined?d:(w.charAt(0).toUpperCase()+w.slice(1))}).filter(Boolean).join(" ")}
   function farbe(id){var h=0;for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return "hsl("+(h%360)+",70%,62%)"}
@@ -217,7 +221,7 @@ tr.sel td{background:#1b1430}
       tip.innerHTML="<b>"+(sel==="CAX"?pr0[best].toFixed(1):geld(pr0[best]))+"</b><br>"+new Date(s[best].t).toLocaleString("de-DE",{weekday:"short",hour:"2-digit",minute:"2-digit"});};
     svg.onmouseleave=function(){tip.style.display="none";var cx=document.getElementById("cx");if(cx){cx.style.display="none";document.getElementById("cd").style.display="none"}};
   }
-  function waehle(id){sel=id;detail();tabelle();window.scrollTo({top:0,behavior:"smooth"});try{history.replaceState(null,"","#"+id)}catch(e){}}
+  function waehle(id){sel=id;detail();tabelle();if(EMB){try{document.querySelector(".detail").scrollIntoView({behavior:"smooth"})}catch(e){}}else window.scrollTo({top:0,behavior:"smooth"});try{history.replaceState(null,"","#"+id)}catch(e){}}
   document.addEventListener("click",function(e){var t=e.target.closest("[data-id]");if(t)waehle(t.getAttribute("data-id"))});
   document.getElementById("ranges").onclick=function(e){var b=e.target.closest("button");if(!b)return;range=+b.dataset.h;[].forEach.call(this.children,function(x){x.classList.toggle("on",x===b)});detail()};
   document.getElementById("tabs").onclick=function(e){var b=e.target.closest("button");if(!b)return;tab=b.dataset.t;limit=60;[].forEach.call(this.children,function(x){x.classList.toggle("on",x===b)});tabelle()};
